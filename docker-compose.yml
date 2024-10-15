@@ -18,6 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    volumes:  # Added volume for db backup
+      - db_data:/var/lib/mysql  # Persist MySQL data
 
   server:
     build:
@@ -42,6 +44,7 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - JWT_SECRET=eX8Q2pKm9zLfRt3nVbYjHgAcWu7sDx5N
+
   client:
     build:
       context: ./client
@@ -59,6 +62,9 @@ services:
 networks:
   node-network:
     driver: bridge
+
+volumes:  # Define the volume at the bottom
+  db_data:  # Named volume for database backup
 
 # Terminal commands for Docker Compose:
 # 1. Start services: `docker-compose up`
