@@ -13,6 +13,11 @@ services:
       MYSQL_DATABASE: alkadycenter
     ports:
       - 3306:3306
+    healthcheck:  # Added health check for db
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   server:
     build:
@@ -28,7 +33,8 @@ services:
       - 3000:3000
     command: npm run dev
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # Updated to wait for db health
     env_file:
       - ./server/.env
     environment:
