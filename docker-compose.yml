@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: db
+    build:
+      context: ./mysql
+    networks:
+      - node-network
+    environment:
+      MYSQL_ROOT_PASSWORD: alkadycenter917382
+      MYSQL_DATABASE: alkadycenter
+    ports:
+      - 3306:3306
+
+  server:
+    build:
+      context: ./server
+    container_name: server
+    working_dir: /var/www/app
+    networks:
+      - node-network
+    volumes:
+      - ./server:/var/www/app
+      - /var/www/app/node_modules
+    ports:
+      - 3000:3000
+    command: npm run dev
+    depends_on:
+      - db
+    env_file:
+      - ./server/.env
+    environment:
+      - DATABASE_URL=mysql://root:alkadycenter917382@db:3306/alkadycenter
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=eX8Q2pKm9zLfRt3nVbYjHgAcWu7sDx5N
+  client:
+    build:
+      context: ./client
+    container_name: client
+    working_dir: /var/www/app
+    networks:
+      - node-network
+    volumes:
+      - ./client:/var/www/app
+      - /var/www/app/node_modules
+    ports:
+      - 5000:3000
+    command: npm run dev
+  
+  nginx:
+    build:
+      context: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 80:80
+    networks:
+      - node-network
+    depends_on:
+      - server
+      - client
+
+networks:
+  node-network:
+    driver: bridge
+
+# Terminal commands for Docker Compose:
+# 1. Start services: `docker-compose up`
+# 2. Start services in detached mode: `docker-compose up -d`
+# 3. Stop services: `docker-compose down`
+# 4. View logs: `docker-compose logs`
+# 5. Execute a command in a running service: `docker-compose exec <service_name> <command>`
+# 6. Build images: `docker-compose build`
+# 7. Pull images: `docker-compose pull`
