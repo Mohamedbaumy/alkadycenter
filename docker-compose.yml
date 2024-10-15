@@ -55,19 +55,6 @@ services:
     ports:
       - 5000:3000
     command: npm run dev
-  
-  nginx:
-    build:
-      context: ./nginx
-    container_name: nginx
-    restart: always
-    ports:
-      - 80:80
-    networks:
-      - node-network
-    depends_on:
-      - server
-      - client
 
 networks:
   node-network:
