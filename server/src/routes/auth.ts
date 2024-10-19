@@ -125,7 +125,7 @@ router.post(
 			.optional()
 			.isString()
 			.withMessage("Device ID must be a string"),
-		
+
 		validateRequest,
 	],
 	register,
@@ -252,9 +252,9 @@ router.post(
 router.post(
 	"/login",
 	[
-		body("phone")
+		body("phone_number")
 			.isString()
-			.isLength({ min: 10, max: 15 })
+			.isLength({ min: 11, max: 11 })
 			.withMessage("Phone must be between 10 and 15 characters"),
 		body("password")
 			.isString()
