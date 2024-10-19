@@ -59,9 +59,9 @@ export const getAllCourses = async (req: Request, res: Response) => {
 			price: `${course.price} جنيه`,
 		}));
 
-		sendResponse(res, "courses", formattedCourses);
+		sendResponse(res, "courses", formattedCourses, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching courses", error);
+		sendResponse(res, "Error fetching courses", error, false);
 	}
 };
 
@@ -98,9 +98,9 @@ export const getTopCourses = async (req: Request, res: Response) => {
 			price: `${course.price} جنيه`,
 		}));
 
-		sendResponse(res, "top_courses", formattedTopCourses);
+		sendResponse(res, "top_courses", formattedTopCourses, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching top courses", error);
+		sendResponse(res, "Error fetching top courses", error, false);
 	}
 };
 
@@ -123,9 +123,9 @@ export const getDoctors = async (req: Request, res: Response) => {
 			{ type: QueryTypes.SELECT },
 		);
 
-		sendResponse(res, "doctors", doctors);
+		sendResponse(res, "doctors", doctors, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching doctors", error);
+		sendResponse(res, "Error fetching doctors", error, false);
 	}
 };
 
@@ -153,9 +153,9 @@ export const getTopDoctors = async (req: Request, res: Response) => {
 			{ type: QueryTypes.SELECT },
 		);
 
-		sendResponse(res, "top_doctors", topDoctors);
+		sendResponse(res, "top_doctors", topDoctors, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching top doctors", error);
+		sendResponse(res, "Error fetching top doctors", error, false);
 	}
 };
 
@@ -191,9 +191,9 @@ export const getDoctorCourses = async (req: Request, res: Response) => {
 			price: `${course.price} جنيه`,
 		}));
 
-		sendResponse(res, "doctor_courses", formattedCourses);
+		sendResponse(res, "doctor_courses", formattedCourses, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching doctor courses", error);
+		sendResponse(res, "Error fetching doctor courses", error, false);
 	}
 };
 
@@ -352,8 +352,8 @@ export const getCourse = async (req: Request, res: Response) => {
 			],
 		});
 
-		sendResponse(res, "course", course);
+		sendResponse(res, "course", course, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching course", error);
+		sendResponse(res, "Error fetching course", error, false);
 	}
 };

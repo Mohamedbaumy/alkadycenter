@@ -23,7 +23,7 @@ export const register = async (req: Request, res: Response) => {
 	try {
 		const existingUser = await User.findOne({ where: { phone: phone_number } });
 		if (existingUser) {
-			return sendResponse(res, "User already exists");
+			return sendResponse(res, "User already exists", null, false);
 		}
 
 		const hashedPassword = await bcrypt.hash(password, 10);
@@ -51,9 +51,14 @@ export const register = async (req: Request, res: Response) => {
 			include: [User],
 		});
 
-		return sendResponse(res, "User registered successfully", student_with_user);
+		return sendResponse(
+			res,
+			"User registered successfully",
+			student_with_user,
+			true,
+		);
 	} catch (error) {
-		return sendResponse(res, "Error registering user", error);
+		return sendResponse(res, "Error registering user", error, false);
 	}
 };
 
@@ -71,12 +76,22 @@ export const login = async (req: Request, res: Response) => {
 	try {
 		const user = await User.findOne({ where: { phone } });
 		if (!user) {
-			return sendResponse(res, "رقم الهاتف او كلمة المرور غير صحيحة");
+			return sendResponse(
+				res,
+				"رقم الهاتف او كلمة المرور غير صحيحة",
+				null,
+				false,
+			);
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.password);
 		if (!isPasswordValid) {
-			return sendResponse(res, "رقم الهاتف او كلمة المرور غير صحيحة");
+			return sendResponse(
+				res,
+				"رقم الهاتف او كلمة المرور غير صحيحة",
+				null,
+				false,
+			);
 		}
 
 		if (
@@ -106,25 +121,30 @@ export const login = async (req: Request, res: Response) => {
 
 		// New response structure
 		const expiresIn = new Date(Date.now() + 8 * 60 * 60 * 1000).toISOString(); // 8 hours from now
-		return sendResponse(res, "logged in successfully", {
-			token,
-			expires_in: expiresIn,
-			data: {
-				user_id: user.id,
-				student_id: "", // TODO: Add student_id
-				name: user.name,
-				phone_number: user.phone,
+		return sendResponse(
+			res,
+			"logged in successfully",
+			{
+				token,
+				expires_in: expiresIn,
+				data: {
+					user_id: user.id,
+					student_id: "", // TODO: Add student_id
+					name: user.name,
+					phone_number: user.phone,
+				},
 			},
-		});
+			true,
+		);
 	} catch (error) {
-		return sendResponse(res, "Error logging in", error);
+		return sendResponse(res, "Error logging in", error, false);
 	}
 };
 
 export const userProfile = async (req: Request, res: Response) => {
 	const token = req.headers.authorization?.split(" ")[1]; // Extract token from headers
 	if (!token) {
-		return sendResponse(res, "No token provided");
+		return sendResponse(res, "No token provided", null, false);
 	}
 
 	try {
@@ -133,22 +153,27 @@ export const userProfile = async (req: Request, res: Response) => {
 
 		const user = await User.findOne({ where: { id: userId } });
 		if (!user) {
-			return sendResponse(res, "User not found");
+			return sendResponse(res, "User not found", null, false);
 		}
 
 		const student = await Student.findOne({ where: { user_id: user.id } });
 		if (!student) {
-			return sendResponse(res, "Student not found");
+			return sendResponse(res, "Student not found", null, false);
 		}
 
-		return sendResponse(res, "بيانات الطالب", {
-			user_id: user.id,
-			student_id: student.id,
-			name: user.name,
-			phone_number: user.phone,
-		});
+		return sendResponse(
+			res,
+			"بيانات الطالب",
+			{
+				user_id: user.id,
+				student_id: student.id,
+				name: user.name,
+				phone_number: user.phone,
+			},
+			true,
+		);
 	} catch (error) {
-		return sendResponse(res, "Error fetching user profile", error);
+		return sendResponse(res, "Error fetching user profile", error, false);
 	}
 };
 

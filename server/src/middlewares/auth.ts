@@ -19,7 +19,7 @@ export const authenticate = async (
 ) => {
 	const token = req.headers.authorization?.split(" ")[1];
 	if (!token) {
-		return sendResponse(res, "No token provided", null);
+		return sendResponse(res, "No token provided", null, false);
 	}
 
 	try {
@@ -28,12 +28,12 @@ export const authenticate = async (
 
 		const user = await User.findOne({ where: { id: userId } });
 		if (!user) {
-			return sendResponse(res, "User not found", null);
+			return sendResponse(res, "User not found", null, false);
 		}
 
 		req.user = user;
 		next();
 	} catch (error) {
-		return sendResponse(res, "Invalid token", null);
+		return sendResponse(res, "Invalid token", null, false);
 	}
 };

@@ -17,7 +17,7 @@ export const createStudent = async (req: Request, res: Response) => {
 			},
 		});
 		if (user) {
-			return sendResponse(res, "رقم الهاتف موجود بالفعل");
+			return sendResponse(res, "رقم الهاتف موجود بالفعل", null, false);
 		}
 
 		const newUser = await User.create({
@@ -27,7 +27,7 @@ export const createStudent = async (req: Request, res: Response) => {
 			password,
 		});
 		if (!newUser) {
-			return sendResponse(res, "المستخدم غير موجود");
+			return sendResponse(res, "المستخدم غير موجود", null, false);
 		}
 
 		const student = await Student.create({
@@ -35,9 +35,9 @@ export const createStudent = async (req: Request, res: Response) => {
 			level_id,
 			user_id: newUser.id,
 		});
-		return sendResponse(res, "تم إنشاء الطالب بنجاح", student);
+		return sendResponse(res, "تم إنشاء الطالب بنجاح", student, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إنشاء الطالب", error);
+		return sendResponse(res, "خطأ في إنشاء الطالب", error, false);
 	}
 };
 
@@ -72,13 +72,18 @@ export const getAllStudents = async (req: Request, res: Response) => {
 
 		const totalPages = Math.ceil(totalStudents / pageSize);
 
-		return sendResponse(res, "تم جلب الطلاب بنجاح", {
-			students,
-			totalPages,
-			currentPage: pageNumber,
-		});
+		return sendResponse(
+			res,
+			"تم جلب الطلاب بنجاح",
+			{
+				students,
+				totalPages,
+				currentPage: pageNumber,
+			},
+			true,
+		);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الطلاب", error);
+		return sendResponse(res, "خطأ في جلب الطلاب", error, false);
 	}
 };
 
@@ -93,11 +98,11 @@ export const getStudentById = async (req: Request, res: Response) => {
 			],
 		});
 		if (!student) {
-			return sendResponse(res, "الطالب غير موجود");
+			return sendResponse(res, "الطالب غير موجود", null, false);
 		}
-		return sendResponse(res, "تم جلب الطالب بنجاح", student);
+		return sendResponse(res, "تم جلب الطالب بنجاح", student, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الطالب", error);
+		return sendResponse(res, "خطأ في جلب الطالب", error, false);
 	}
 };
 
@@ -108,7 +113,7 @@ export const updateStudent = async (req: Request, res: Response) => {
 	try {
 		const student = await Student.findByPk(id);
 		if (!student) {
-			return sendResponse(res, "الطالب غير موجود");
+			return sendResponse(res, "الطالب غير موجود", null, false);
 		}
 
 		student.faculty_id = faculty_id;
@@ -116,7 +121,7 @@ export const updateStudent = async (req: Request, res: Response) => {
 
 		const user = await User.findByPk(student.user_id);
 		if (!user) {
-			return sendResponse(res, "المستخدم غير موجود");
+			return sendResponse(res, "المستخدم غير موجود", null, false);
 		}
 
 		user.name = name;
@@ -125,9 +130,9 @@ export const updateStudent = async (req: Request, res: Response) => {
 		await user.save();
 		await student.save();
 
-		return sendResponse(res, "تم تحديث الطالب بنجاح", student);
+		return sendResponse(res, "تم تحديث الطالب بنجاح", student, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في تحديث الطالب", error);
+		return sendResponse(res, "خطأ في تحديث الطالب", error, false);
 	}
 };
 
@@ -137,14 +142,14 @@ export const deleteStudent = async (req: Request, res: Response) => {
 	try {
 		const student = await Student.findByPk(id);
 		if (!student) {
-			return sendResponse(res, "الطالب غير موجود");
+			return sendResponse(res, "الطالب غير موجود", null, false);
 		}
 
 		await student.destroy();
 		await User.destroy({ where: { id: student.user_id } });
-		return sendResponse(res, "تم حذف الطالب بنجاح");
+		return sendResponse(res, "تم حذف الطالب بنجاح", null, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في حذف الطالب", error);
+		return sendResponse(res, "خطأ في حذف الطالب", error, false);
 	}
 };
 
@@ -154,12 +159,12 @@ export const resetStudentDeviceInfo = async (req: Request, res: Response) => {
 	try {
 		const student = await Student.findByPk(id);
 		if (!student) {
-			return sendResponse(res, "الطالب غير موجود");
+			return sendResponse(res, "الطالب غير موجود", null, false);
 		}
 
 		const user = await User.findByPk(student.user_id);
 		if (!user) {
-			return sendResponse(res, "المستخدم غير موجود");
+			return sendResponse(res, "المستخدم غير موجود", null, false);
 		}
 
 		user.platform = "";
@@ -169,9 +174,9 @@ export const resetStudentDeviceInfo = async (req: Request, res: Response) => {
 		user.notification_token = "";
 		await user.save();
 
-		return sendResponse(res, "تم إعادة تعيين معلومات الجهاز بنجاح");
+		return sendResponse(res, "تم إعادة تعيين معلومات الجهاز بنجاح", null, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إعادة تعيين معلومات الجهاز", error);
+		return sendResponse(res, "خطأ في إعادة تعيين معلومات الجهاز", error, false);
 	}
 };
 
@@ -181,12 +186,12 @@ export const addCourseToStudent = async (req: Request, res: Response) => {
 	try {
 		const student = await Student.findByPk(studentId);
 		if (!student) {
-			return sendResponse(res, "الطالب غير موجود");
+			return sendResponse(res, "الطالب غير موجود", null, false);
 		}
 
 		const course = await Course.findByPk(courseId);
 		if (!course) {
-			return sendResponse(res, "المقرر غير موجود");
+			return sendResponse(res, "المقرر غير موجود", null, false);
 		}
 
 		const [studentCourse, created] = await StudentCourse.findOrCreate({
@@ -197,10 +202,10 @@ export const addCourseToStudent = async (req: Request, res: Response) => {
 		});
 
 		if (created) {
-			return sendResponse(res, "تم إضافة المقرر للطالب بنجاح");
+			return sendResponse(res, "تم إضافة المقرر للطالب بنجاح", null, true);
 		}
-		return sendResponse(res, "المقرر مضاف بالفعل للطالب");
+		return sendResponse(res, "المقرر مضاف بالفعل للطالب", null, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إضافة المقرر للطالب", error);
+		return sendResponse(res, "خطأ في إضافة المقرر للطالب", error, false);
 	}
 };

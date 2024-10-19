@@ -15,13 +15,13 @@ export const createDoctor = async (req: Request, res: Response) => {
 			password,
 		});
 		if (!user) {
-			return sendResponse(res, "المستخدم غير موجود");
+			return sendResponse(res, "المستخدم غير موجود", null, false);
 		}
 
 		const doctor = await Doctor.create({ image, job_title, user_id: user.id });
-		return sendResponse(res, "تم إنشاء الطبيب بنجاح", doctor);
+		return sendResponse(res, "تم إنشاء الطبيب بنجاح", doctor, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إنشاء الطبيب", error);
+		return sendResponse(res, "خطأ في إنشاء الطبيب", error, false);
 	}
 };
 
@@ -58,9 +58,9 @@ export const getAllDoctors = async (req: Request, res: Response) => {
 			doctors,
 			totalPages,
 			currentPage: pageNumber,
-		});
+		}, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الأطباء", error);
+		return sendResponse(res, "خطأ في جلب الأطباء", error, false);
 	}
 };
 
@@ -72,11 +72,11 @@ export const getDoctorById = async (req: Request, res: Response) => {
 			include: [{ model: User, attributes: ["name", "phone", "password"] }],
 		});
 		if (!doctor) {
-			return sendResponse(res, "الطبيب غير موجود");
+			return sendResponse(res, "الطبيب غير موجود", null, false);
 		}
-		return sendResponse(res, "تم جلب الطبيب بنجاح", doctor);
+		return sendResponse(res, "تم جلب الطبيب بنجاح", doctor, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الطبيب", error);
+		return sendResponse(res, "خطأ في جلب الطبيب", error, false);
 	}
 };
 
@@ -87,7 +87,7 @@ export const updateDoctor = async (req: Request, res: Response) => {
 	try {
 		const doctor = await Doctor.findByPk(id);
 		if (!doctor) {
-			return sendResponse(res, "الطبيب غير موجود");
+			return sendResponse(res, "الطبيب غير موجود", null, false);
 		}
 
 		doctor.image = image;
@@ -95,7 +95,7 @@ export const updateDoctor = async (req: Request, res: Response) => {
 
 		const user = await User.findByPk(doctor.user_id);
 		if (!user) {
-			return sendResponse(res, "المستخدم غير موجود");
+			return sendResponse(res, "المستخدم غير موجود", null, false);
 		}
 
 		user.name = name;
@@ -104,9 +104,9 @@ export const updateDoctor = async (req: Request, res: Response) => {
 		await user.save();
 		await doctor.save();
 
-		return sendResponse(res, "تم تحديث الطبيب بنجاح", doctor);
+		return sendResponse(res, "تم تحديث الطبيب بنجاح", doctor, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في تحديث الطبيب", error);
+		return sendResponse(res, "خطأ في تحديث الطبيب", error, false);
 	}
 };
 
@@ -116,13 +116,13 @@ export const deleteDoctor = async (req: Request, res: Response) => {
 	try {
 		const doctor = await Doctor.findByPk(id);
 		if (!doctor) {
-			return sendResponse(res, "الطبيب غير موجود");
+			return sendResponse(res, "الطبيب غير موجود", null, false);
 		}
 
 		await doctor.destroy();
 		await User.destroy({ where: { id: doctor.user_id } });
-		return sendResponse(res, "تم حذف الطبيب بنجاح");
+		return sendResponse(res, "تم حذف الطبيب بنجاح", null, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في حذف الطبيب", error);
+		return sendResponse(res, "خطأ في حذف الطبيب", error, false);
 	}
 };

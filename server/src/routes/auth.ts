@@ -119,11 +119,13 @@ router.post(
 			.isString()
 			.isLength({ min: 6 })
 			.withMessage("Password must be at least 6 characters"),
-		body("role").isString().notEmpty().withMessage("Role is required"),
+		body("level_id").isInt().withMessage("Level ID must be an integer"),
+		body("faculty_id").isInt().withMessage("Faculty ID must be an integer"),
 		body("device_id")
 			.optional()
 			.isString()
 			.withMessage("Device ID must be a string"),
+		
 		validateRequest,
 	],
 	register,

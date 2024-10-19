@@ -6,9 +6,9 @@ import Level from "../models/Level";
 export const getAllFaculties = async (req: Request, res: Response) => {
 	try {
 		const faculties = await Faculty.findAll();
-		sendResponse(res, "all faculties", faculties);
+		sendResponse(res, "all faculties", faculties, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching faculties", error);
+		sendResponse(res, "Error fetching faculties", error, false);
 	}
 };
 
@@ -19,8 +19,8 @@ export const getLevelsOfFaculty = async (req: Request, res: Response) => {
 			where: { faculty_id: Number(faculty_id) },
 			attributes: ["id", "name"],
 		});
-		sendResponse(res, "levels of faculty", levels);
+		sendResponse(res, "levels of faculty", levels, true);
 	} catch (error) {
-		sendResponse(res, "Error fetching levels of faculty", error);
+		sendResponse(res, "Error fetching levels of faculty", error, false);
 	}
 };

@@ -10,13 +10,13 @@ export const createFaculty = async (req: Request, res: Response) => {
 	try {
 		const existingFaculty = await Faculty.findOne({ where: { name } });
 		if (existingFaculty) {
-			return sendResponse(res, "الكلية موجودة بالفعل");
+			return sendResponse(res, "الكلية موجودة بالفعل", null, false);
 		}
 
 		const faculty = await Faculty.create({ name });
-		return sendResponse(res, "تم إنشاء الكلية بنجاح", faculty);
+		return sendResponse(res, "تم إنشاء الكلية بنجاح", faculty, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إنشاء الكلية", error);
+		return sendResponse(res, "خطأ في إنشاء الكلية", error, false);
 	}
 };
 
@@ -48,13 +48,18 @@ export const getAllFaculties = async (req: Request, res: Response) => {
 
 		const totalPages = Math.ceil(totalFaculties / pageSize);
 
-		return sendResponse(res, "تم جلب الكليات بنجاح", {
-			faculties,
-			totalPages,
-			currentPage: pageNumber,
-		});
+		return sendResponse(
+			res,
+			"تم جلب الكليات بنجاح",
+			{
+				faculties,
+				totalPages,
+				currentPage: pageNumber,
+			},
+			true,
+		);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الكليات", error);
+		return sendResponse(res, "خطأ في جلب الكليات", error, false);
 	}
 };
 
@@ -64,11 +69,11 @@ export const getFacultyById = async (req: Request, res: Response) => {
 	try {
 		const faculty = await Faculty.findByPk(id);
 		if (!faculty) {
-			return sendResponse(res, "الكلية غير موجودة");
+			return sendResponse(res, "الكلية غير موجودة", null, false);
 		}
-		return sendResponse(res, "تم جلب الكلية بنجاح", faculty);
+		return sendResponse(res, "تم جلب الكلية بنجاح", faculty, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الكلية", error);
+		return sendResponse(res, "خطأ في جلب الكلية", error, false);
 	}
 };
 
@@ -114,13 +119,18 @@ export const createLevel = async (req: Request, res: Response) => {
 	try {
 		const faculty = await Faculty.findByPk(faculty_id);
 		if (!faculty) {
-			return sendResponse(res, "الكلية غير موجودة", { name, faculty_id });
+			return sendResponse(
+				res,
+				"الكلية غير موجودة",
+				{ name, faculty_id },
+				false,
+			);
 		}
 
 		const level = await Level.create({ name, faculty_id: Number(faculty_id) });
-		return sendResponse(res, "تم إنشاء المستوى بنجاح", level);
+		return sendResponse(res, "تم إنشاء المستوى بنجاح", level, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في إنشاء المستوى", error);
+		return sendResponse(res, "خطأ في إنشاء المستوى", error, false);
 	}
 };
 
@@ -132,12 +142,12 @@ export const getLevels = async (req: Request, res: Response) => {
 			include: [{ model: Level }],
 		});
 		if (!faculty) {
-			return sendResponse(res, "الكلية غير موجودة");
+			return sendResponse(res, "الكلية غير موجودة", null, false);
 		}
 
-		return sendResponse(res, "تم جلب المستويات بنجاح", faculty.Levels);
+		return sendResponse(res, "تم جلب المستويات بنجاح", faculty.Levels, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب المستويات", error);
+		return sendResponse(res, "خطأ في جلب المستويات", error, false);
 	}
 };
 
@@ -148,15 +158,15 @@ export const updateLevel = async (req: Request, res: Response) => {
 	try {
 		const level = await Level.findByPk(level_id);
 		if (!level) {
-			return sendResponse(res, "المستوى غير موجود");
+			return sendResponse(res, "المستوى غير موجود", null, false);
 		}
 
 		level.name = name;
 		await level.save();
 
-		return sendResponse(res, "تم تحديث المستوى بنجاح", level);
+		return sendResponse(res, "تم تحديث المستوى بنجاح", level, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في تحديث المستوى", error);
+		return sendResponse(res, "خطأ في تحديث المستوى", error, false);
 	}
 };
 
@@ -166,12 +176,12 @@ export const deleteLevel = async (req: Request, res: Response) => {
 	try {
 		const level = await Level.findByPk(level_id);
 		if (!level) {
-			return sendResponse(res, "المستوى غير موجود");
+			return sendResponse(res, "المستوى غير موجود", null, false);
 		}
 
 		await level.destroy();
-		return sendResponse(res, "تم حذف المستوى بنجاح");
+		return sendResponse(res, "تم حذف المستوى بنجاح", null, true);
 	} catch (error) {
-		return sendResponse(res, "خطأ في حذف المستوى", error);
+		return sendResponse(res, "خطأ في حذف المستوى", error, false);
 	}
 };
