@@ -24,6 +24,9 @@ CMD ["mysqld"]
 # 4. Start a stopped container
 # docker start mysql-alkadycenter
 
+# restart the container
+# docker restart mysql-alkadycenter
+
 # 5. Remove the container (must be stopped first)
 # docker rm mysql-alkadycenter
 
@@ -50,3 +53,29 @@ CMD ["mysqld"]
 
 # 13. To edit the Dockerfile, simply modify it with a text editor
 # and rebuild the image using the build command (step 1)
+
+# stop all running containers
+# docker stop $(docker ps -aq)
+
+# delete all containers
+# docker rm $(docker ps -aq)
+
+# delete all images
+# docker rmi $(docker images -aq)       
+
+# delete all volumes
+# docker volume rm $(docker volume ls -q)       
+
+# delete all networks
+# docker network rm $(docker network ls -q)
+
+# delete all stopped containers
+# docker ps -aq | xargs docker rm
+
+# delete all stopped images
+# docker images -aq | xargs docker rmi
+
+# delete all stopped volumes
+# docker volume ls -q | xargs docker volume rm
+
+

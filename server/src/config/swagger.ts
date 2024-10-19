@@ -10,7 +10,10 @@ const swaggerOptions = {
 		},
 		servers: [
 			{
-				url: "http://localhost:3000/api",
+				url:
+					process.env.NODE_ENV === "development"
+						? "http://localhost:3000/api"
+						: "https://alqadi.online/api",
 			},
 		],
 	},
