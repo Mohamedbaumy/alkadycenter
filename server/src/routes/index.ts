@@ -9,8 +9,8 @@ import { authenticate } from "../middlewares/auth";
 const router = Router();
 
 router.use("/auth", authRoutes);
-router.use("/", authenticate, generalRoutes);
-router.use("/", authenticate, homeRoutes);
+router.use("/", generalRoutes);
+router.use("/", homeRoutes);
 router.use("/faculty", facultyRoutes);
 router.use("/doctor", doctorRoutes);
 router.use("/student", studentRoutes);
