@@ -37,3 +37,8 @@ export const deleteStudent = async (id: number) => {
   const response = await axios.delete(`${BASE_URL}/${id}`);
   return response.data;
 };
+
+export const resetStudentDeviceInfo = async (id: number) => {
+  const response = await axios.post(`${BASE_URL}/${id}/reset-device-info`);
+  return response.data;
+};

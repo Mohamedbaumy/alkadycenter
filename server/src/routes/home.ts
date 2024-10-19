@@ -1,7 +1,23 @@
 import { Router } from "express";
-import { getAllCourses, getDoctorCourses, getDoctors, getTopCourses, getTopDoctors } from "../controllers/home"; // Import the controller functions
+import {
+	getAllCourses,
+	getDoctorCourses,
+	getDoctors,
+	getTopCourses,
+	getTopDoctors,
+} from "../controllers/home"; // Import the controller functions
 
 const router = Router();
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
 
 /**
  * @swagger
@@ -9,6 +25,8 @@ const router = Router();
  *   get:
  *     summary: Get all courses
  *     tags: [Home]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Courses retrieved successfully
@@ -24,37 +42,11 @@ const router = Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       title:
- *                         type: string
- *                       image:
- *                         type: string
- *                       doctor_name:
- *                         type: string
- *                       doctor_image:
- *                         type: string
- *                       doctor_job_title:
- *                         type: string
- *                       price:
- *                         type: string
- *                       no_of_lectures:
- *                         type: integer
- *                       no_of_documents:
- *                         type: integer
+ *                     $ref: '#/components/schemas/Course'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       500:
- *         description: Error fetching courses
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                 msg:
- *                   type: string
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.get("/all-courses", getAllCourses); // Define the route for getting all courses
 
@@ -181,7 +173,7 @@ router.get("/all-doctors", getDoctors);
  *                 status:
  *                   type: boolean
  *                 msg:
- *                   type: string   
+ *                   type: string
  *                 data:
  *                   type: array
  *                   items:
@@ -190,7 +182,7 @@ router.get("/all-doctors", getDoctors);
  *                       doctor_id:
  *                         type: integer
  *                       user_id:
- *                         type: integer    
+ *                         type: integer
  *                       name:
  *                         type: string
  *                       image:
@@ -198,7 +190,7 @@ router.get("/all-doctors", getDoctors);
  *                       job_title:
  *                         type: string
  *                       no_of_courses:
- *                         type: integer    
+ *                         type: integer
  *                       no_of_students:
  *                         type: integer
  *       500:
@@ -207,7 +199,7 @@ router.get("/all-doctors", getDoctors);
  *           application/json:
  *             schema:
  *               type: object
- *               properties:    
+ *               properties:
  *                 status:
  *                   type: boolean
  *                 msg:
@@ -240,7 +232,7 @@ router.get("/doctors", getTopDoctors);
  *                 msg:
  *                   type: string
  *                 data:
- *                   type: array    
+ *                   type: array
  *                   items:
  *                     type: object
  *                     properties:
@@ -249,7 +241,7 @@ router.get("/doctors", getTopDoctors);
  *                       title:
  *                         type: string
  *                       image:
- *                         type: string 
+ *                         type: string
  *                       doctor_name:
  *                         type: string
  *                       doctor_image:
@@ -257,7 +249,7 @@ router.get("/doctors", getTopDoctors);
  *                       doctor_job_title:
  *                         type: string
  *                       price:
- *                         type: string 
+ *                         type: string
  *                       no_of_lectures:
  *                         type: integer
  *                       no_of_documents:
@@ -275,6 +267,5 @@ router.get("/doctors", getTopDoctors);
  *                   type: string
  */
 router.get("/doctor-courses/:doctor_id", getDoctorCourses);
-    
 
 export default router;

@@ -115,6 +115,19 @@ router.post(
 );
 
 /**
+ * 
+ * name: "Test Student",
+    phone: "01100000000",
+    password: hashedPassword,
+    role: UserRole.STUDENT,
+    platform: "Android",
+    manufacturer: "Gulgowski, McLaughlin and D'Amore",
+    model: "Larkin LLC 6",
+    device_id: "f1c4cdc9-f135-47bf-bf74-17425c96dc31",
+    notification_token: faker.string.alphanumeric(30),
+ */
+
+/**
  * @swagger
  * /auth/login:
  *   post:
@@ -129,18 +142,25 @@ router.post(
  *             properties:
  *               phone:
  *                 type: string
+ *                 example: "01100000000"
  *               password:
  *                 type: string
+ *                 example: "01000000000"
  *               device_id:
  *                 type: string
+ *                 example: "f1c4cdc9-f135-47bf-bf74-17425c96dc31"
  *               platform:
  *                 type: string
+ *                 example: "Android"
  *               manufacturer:
  *                 type: string
+ *                 example: "Gulgowski, McLaughlin and D'Amore"
  *               model:
  *                 type: string
+ *                 example: "Larkin LLC 6"
  *               notification_token:
  *                 type: string
+ *                 example: "token123"
  *     responses:
  *       200:
  *         description: Login successful

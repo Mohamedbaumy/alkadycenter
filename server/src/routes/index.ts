@@ -5,7 +5,7 @@ import homeRoutes from "./home";
 import facultyRoutes from "./faculty";
 import doctorRoutes from "./doctor";
 import studentRoutes from "./student";
-
+import { authenticate } from "../middlewares/auth";
 const router = Router();
 
 router.use("/auth", authRoutes);

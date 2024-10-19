@@ -1,6 +1,5 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
@@ -11,8 +10,13 @@ const sequelize = new Sequelize(process.env.DATABASE_URL as string, {
 export const connectToDatabase = async () => {
 	try {
 		await sequelize.authenticate();
-		await sequelize.sync({ force: false });
 		console.log("Database connection has been established successfully.");
+
+		// Import and call seedData here instead of in the sync callback
+		const { seedData } = await import("../seeders");
+		await sequelize.sync({ force: false }).then(async () => {
+			await seedData(sequelize);
+		});
 	} catch (error) {
 		console.error("Unable to connect to the database:", error);
 		throw error;

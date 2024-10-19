@@ -1,8 +1,10 @@
 import type { Request, Response } from "express";
 import Student from "../models/Student";
 import User, { UserRole } from "../models/User";
+import Course from "../models/Course";
 import { sendResponse } from "../middlewares/errorHandler";
 import { Op } from "sequelize";
+import StudentCourse from "../models/StudentCourse";
 
 // Create a new student
 export const createStudent = async (req: Request, res: Response) => {
@@ -52,12 +54,15 @@ export const getAllStudents = async (req: Request, res: Response) => {
 				include: [
 					{
 						model: User,
-
 						where: {
 							name: {
 								[Op.like]: `%${search}%`,
 							},
 						},
+					},
+					{
+						model: StudentCourse,
+						include: [{ model: Course }],
 					},
 				],
 				order: [["createdAt", "DESC"]],
@@ -82,7 +87,10 @@ export const getStudentById = async (req: Request, res: Response) => {
 	const { id } = req.params;
 	try {
 		const student = await Student.findByPk(id, {
-			include: [{ model: User, attributes: ["name", "phone", "password"] }],
+			include: [
+				{ model: User, attributes: ["name", "phone", "password"] },
+				{ model: Course },
+			],
 		});
 		if (!student) {
 			return sendResponse(res, "الطالب غير موجود");
@@ -137,5 +145,62 @@ export const deleteStudent = async (req: Request, res: Response) => {
 		return sendResponse(res, "تم حذف الطالب بنجاح");
 	} catch (error) {
 		return sendResponse(res, "خطأ في حذف الطالب", error);
+	}
+};
+
+// Reset student device info
+export const resetStudentDeviceInfo = async (req: Request, res: Response) => {
+	const { id } = req.params;
+	try {
+		const student = await Student.findByPk(id);
+		if (!student) {
+			return sendResponse(res, "الطالب غير موجود");
+		}
+
+		const user = await User.findByPk(student.user_id);
+		if (!user) {
+			return sendResponse(res, "المستخدم غير موجود");
+		}
+
+		user.platform = "";
+		user.manufacturer = "";
+		user.model = "";
+		user.device_id = "";
+		user.notification_token = "";
+		await user.save();
+
+		return sendResponse(res, "تم إعادة تعيين معلومات الجهاز بنجاح");
+	} catch (error) {
+		return sendResponse(res, "خطأ في إعادة تعيين معلومات الجهاز", error);
+	}
+};
+
+// Add a new function to add a course to a student
+export const addCourseToStudent = async (req: Request, res: Response) => {
+	const { studentId, courseId } = req.params;
+	try {
+		const student = await Student.findByPk(studentId);
+		if (!student) {
+			return sendResponse(res, "الطالب غير موجود");
+		}
+
+		const course = await Course.findByPk(courseId);
+		if (!course) {
+			return sendResponse(res, "المقرر غير موجود");
+		}
+
+		const [studentCourse, created] = await StudentCourse.findOrCreate({
+			where: {
+				student_id: studentId,
+				course_id: courseId,
+			},
+		});
+
+		if (created) {
+			return sendResponse(res, "تم إضافة المقرر للطالب بنجاح");
+		}
+		return sendResponse(res, "المقرر مضاف بالفعل للطالب");
+	} catch (error) {
+		return sendResponse(res, "خطأ في إضافة المقرر للطالب", error);
 	}
 };

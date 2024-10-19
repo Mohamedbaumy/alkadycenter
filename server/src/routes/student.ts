@@ -7,6 +7,8 @@ import {
 	getStudentById,
 	updateStudent,
 	deleteStudent,
+	resetStudentDeviceInfo,
+	addCourseToStudent,
 } from "../controllers/student";
 
 const router = Router();
@@ -50,6 +52,23 @@ router.delete(
 	"/:id",
 	[param("id").isInt().withMessage("ID must be an integer"), validateRequest],
 	deleteStudent,
+);
+
+router.post(
+	"/:id/reset-device-info",
+	[param("id").isInt().withMessage("ID must be an integer"), validateRequest],
+	resetStudentDeviceInfo,
+);
+
+// Add a new route for adding a course to a student
+router.post(
+	"/:studentId/courses/:courseId",
+	[
+		param("studentId").isInt().withMessage("Student ID must be an integer"),
+		param("courseId").isInt().withMessage("Course ID must be an integer"),
+		validateRequest,
+	],
+	addCourseToStudent,
 );
 
 export default router;

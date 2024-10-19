@@ -5,10 +5,22 @@ const router = Router();
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  * /faculties:
  *   get:
  *     summary: Get all faculties
  *     tags: [General]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Faculties retrieved successfully
@@ -24,23 +36,11 @@ const router = Router();
  *                 data:
  *                   type: array
  *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
- *                         type: string
+ *                     $ref: '#/components/schemas/Faculty'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
  *       500:
- *         description: Error fetching faculties
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: boolean
- *                 msg:
- *                   type: string
+ *         $ref: '#/components/responses/InternalServerError'
  */
 router.get("/faculties", getAllFaculties); // Define the route for getting all faculties
 
@@ -91,5 +91,41 @@ router.get("/faculties", getAllFaculties); // Define the route for getting all f
  *                   type: string
  */
 router.get("/faculty/levels", getLevelsOfFaculty);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Faculty:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *   responses:
+ *     UnauthorizedError:
+ *       description: Access token is missing or invalid
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: boolean
+ *               msg:
+ *                 type: string
+ *     InternalServerError:
+ *       description: Internal server error
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: boolean
+ *               msg:
+ *                 type: string
+ */
 
 export default router;
