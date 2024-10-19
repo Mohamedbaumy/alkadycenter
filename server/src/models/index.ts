@@ -3,10 +3,10 @@ import User from "./User";
 import Doctor from "./Doctor";
 import Student from "./Student";
 import Course from "./Course";
-import College from "./College";
-import AcademicYear from "./AcademicYear";
-import Video from "./Video";
-import File from "./File";
+import Faculty from "./Faculty";
+import Level from "./Level";
+import Lecture from "./Lecture";
+import Document from "./Document";
 import Quiz from "./Quiz";
 import Question from "./Question";
 import Answer from "./Answer";
@@ -15,76 +15,80 @@ import StudentCourse from "./StudentCourse";
 
 // Define relationships
 // User <-> Doctor
-User.hasOne(Doctor, { foreignKey: "userId" });
-Doctor.belongsTo(User, { foreignKey: "userId" });
+User.hasOne(Doctor, { foreignKey: "user_id" });
+Doctor.belongsTo(User, { foreignKey: "user_id" });
 
 // User <-> Student
-User.hasOne(Student, { foreignKey: "userId" });
-Student.belongsTo(User, { foreignKey: "userId" });
+User.hasOne(Student, { foreignKey: "user_id" });
+Student.belongsTo(User, { foreignKey: "user_id" });
 
 // Student <-> Course (Many-to-Many)
 Student.belongsToMany(Course, {
 	through: StudentCourse,
-	foreignKey: "studentId",
+	foreignKey: "student_id",
 });
 Course.belongsToMany(Student, {
 	through: StudentCourse,
-	foreignKey: "courseId",
+	foreignKey: "course_id",
 });
 
 // Doctor <-> Course (One-to-Many)
-Doctor.hasMany(Course, { foreignKey: "doctorId" });
-Course.belongsTo(Doctor, { foreignKey: "doctorId" });
+Doctor.hasMany(Course, { foreignKey: "doctor_id" });
+Course.belongsTo(Doctor, { foreignKey: "doctor_id" });
 
-// Course <-> College (One-to-Many)
-Course.belongsTo(College, { foreignKey: "collegeId" });
-College.hasMany(Course, { foreignKey: "collegeId" });
+// Course <-> Faculty (One-to-Many)
+Course.belongsTo(Faculty, { foreignKey: "faculty_id" });
+Faculty.hasMany(Course, { foreignKey: "faculty_id" });
 
-// Course <-> AcademicYear (One-to-Many)
-Course.belongsTo(AcademicYear, { foreignKey: "academicYearId" });
-AcademicYear.hasMany(Course, { foreignKey: "academicYearId" });
+// Faculty <-> Level (One-to-Many)
+Faculty.hasMany(Level, { foreignKey: "faculty_id" });
+Level.belongsTo(Faculty, { foreignKey: "faculty_id" });
 
-// Course <-> Video (One-to-Many)
-Course.hasMany(Video, { foreignKey: "courseId" });
-Video.belongsTo(Course, { foreignKey: "courseId" });
+// Course <-> Level (One-to-Many)
+Course.belongsTo(Level, { foreignKey: "level_id" });
+Level.hasMany(Course, { foreignKey: "level_id" });
+
+// Course <-> Lecture (One-to-Many)
+Course.hasMany(Lecture, { foreignKey: "course_id" });
+Lecture.belongsTo(Course, { foreignKey: "course_id" });
 
 // Course <-> File (One-to-Many)
-Course.hasMany(File, { foreignKey: "courseId" });
-File.belongsTo(Course, { foreignKey: "courseId" });
+Course.hasMany(Document, { foreignKey: "course_id" });
+Document.belongsTo(Course, { foreignKey: "course_id" });
 
 // Course <-> Quiz (One-to-Many)
-Course.hasMany(Quiz, { foreignKey: "courseId" });
-Quiz.belongsTo(Course, { foreignKey: "courseId" });
+Course.hasMany(Quiz, { foreignKey: "course_id" });
+Quiz.belongsTo(Course, { foreignKey: "course_id" });
 
 // Quiz <-> Question (One-to-Many)
-Quiz.hasMany(Question, { foreignKey: "quizId" });
-Question.belongsTo(Quiz, { foreignKey: "quizId" });
+Quiz.hasMany(Question, { foreignKey: "quiz_id" });
+Question.belongsTo(Quiz, { foreignKey: "quiz_id" });
 
 // Question <-> Answer (One-to-Many)
-Question.hasMany(Answer, { foreignKey: "questionId" });
-Answer.belongsTo(Question, { foreignKey: "questionId" });
+Question.hasMany(Answer, { foreignKey: "question_id" });
+Answer.belongsTo(Question, { foreignKey: "question_id" });
 
 // User <-> UserAnswer (One-to-Many)
-User.hasMany(UserAnswer, { foreignKey: "userId" });
-UserAnswer.belongsTo(User, { foreignKey: "userId" });
+User.hasMany(UserAnswer, { foreignKey: "user_id" });
+UserAnswer.belongsTo(User, { foreignKey: "user_id" });
 
 // Question <-> UserAnswer (One-to-Many)
-Question.hasMany(UserAnswer, { foreignKey: "questionId" });
-UserAnswer.belongsTo(Question, { foreignKey: "questionId" });
+Question.hasMany(UserAnswer, { foreignKey: "question_id" });
+UserAnswer.belongsTo(Question, { foreignKey: "question_id" });
 
 // Answer <-> UserAnswer (One-to-Many)
-Answer.hasMany(UserAnswer, { foreignKey: "answerId" });
-UserAnswer.belongsTo(Answer, { foreignKey: "answerId" });
+Answer.hasMany(UserAnswer, { foreignKey: "answer_id" });
+UserAnswer.belongsTo(Answer, { foreignKey: "answer_id" });
 
 export {
 	User,
 	Doctor,
 	Student,
 	Course,
-	College,
-	AcademicYear,
-	Video,
-	File,
+	Faculty,
+	Level,
+	Lecture,
+	Document,
 	Quiz,
 	Question,
 	Answer,

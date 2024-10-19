@@ -1,15 +1,14 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import User from "./User";
-import AcademicYear from "./AcademicYear";
-import College from "./College";
+import Level from "./Level";
+import Faculty from "./Faculty";
 
 interface StudentAttributes {
 	id: number;
-	major: string;
-	collegeId: number;
-	academicYearId: number;
-	userId: number;
+	faculty_id: number;
+	level_id: number;
+	user_id: number;
 }
 
 interface StudentCreationAttributes extends Omit<StudentAttributes, "id"> {}
@@ -19,10 +18,9 @@ class Student
 	implements StudentAttributes
 {
 	public id!: number;
-	public major!: string;
-	public collegeId!: number;
-	public academicYearId!: number;
-	public userId!: number;
+	public faculty_id!: number;
+	public level_id!: number;
+	public user_id!: number;
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -35,27 +33,23 @@ Student.init(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		major: {
-			type: DataTypes.STRING,
-			allowNull: false,
-		},
-		collegeId: {
+		faculty_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: College,
+				model: Faculty,
 				key: "id",
 			},
 		},
-		academicYearId: {
+		level_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: AcademicYear,
+				model: Level,
 				key: "id",
 			},
 		},
-		userId: {
+		user_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -70,7 +64,7 @@ Student.init(
 	},
 );
 
-Student.belongsTo(User, { foreignKey: "userId" });
-User.hasOne(Student, { foreignKey: "userId" });
+Student.belongsTo(User, { foreignKey: "user_id" });
+User.hasOne(Student, { foreignKey: "user_id" });
 
 export default Student;

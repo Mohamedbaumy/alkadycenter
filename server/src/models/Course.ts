@@ -1,18 +1,19 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import Doctor from "./Doctor";
-import College from "./College";
-import AcademicYear from "./AcademicYear";
+import Faculty from "./Faculty";
+import Level from "./Level";
 
 interface CourseAttributes {
 	id: number;
 	title: string;
 	description: string;
+	image: string;
 	price: number;
-	collegeId: number;
-	academicYearId: number;
-	semester: string; // "first" or "second"
-	doctorId: number; // Doctor
+	faculty_id: number;
+	level_id: number;
+	semester: string;
+	doctor_id: number;
 }
 
 interface CourseCreationAttributes extends Omit<CourseAttributes, "id"> {}
@@ -24,11 +25,12 @@ class Course
 	public id!: number;
 	public title!: string;
 	public description!: string;
+	public image!: string;
 	public price!: number;
-	public collegeId!: number;
-	public academicYearId!: number;
+	public faculty_id!: number;
+	public level_id!: number;
 	public semester!: string;
-	public doctorId!: number;
+	public doctor_id!: number;
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -49,23 +51,27 @@ Course.init(
 			type: DataTypes.TEXT,
 			allowNull: false,
 		},
+		image: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		price: {
 			type: DataTypes.FLOAT,
 			allowNull: false,
 		},
-		collegeId: {
+		faculty_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: College,
+				model: Faculty,
 				key: "id",
 			},
 		},
-		academicYearId: {
+		level_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: AcademicYear,
+				model: Level,
 				key: "id",
 			},
 		},
@@ -73,7 +79,7 @@ Course.init(
 			type: DataTypes.ENUM("first", "second"),
 			allowNull: false,
 		},
-		doctorId: {
+		doctor_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {

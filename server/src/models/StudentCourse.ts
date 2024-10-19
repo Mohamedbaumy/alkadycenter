@@ -3,8 +3,8 @@ import sequelize from "../config/database";
 
 interface StudentCourseAttributes {
 	id: number;
-	studentId: number;
-	courseId: number;
+	student_id: number; 
+	course_id: number; 
 }
 
 interface StudentCourseCreationAttributes
@@ -15,8 +15,8 @@ class StudentCourse
 	implements StudentCourseAttributes
 {
 	public id!: number;
-	public studentId!: number;
-	public courseId!: number;
+	public student_id!: number; 
+	public course_id!: number; 
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -29,19 +29,19 @@ StudentCourse.init(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		studentId: {
+		student_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: "students", // Name of the table in the database
+				model: "students",
 				key: "id",
 			},
 		},
-		courseId: {
+		course_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: "courses", // Name of the table in the database
+				model: "courses",
 				key: "id",
 			},
 		},
@@ -51,5 +51,4 @@ StudentCourse.init(
 		tableName: "StudentCourses",
 	},
 );
-
 export default StudentCourse;

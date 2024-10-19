@@ -51,7 +51,7 @@ User.init(
 		name: {
 			type: DataTypes.STRING,
 			allowNull: false,
-			unique: true,
+			unique: false,
 		},
 		phone: {
 			type: DataTypes.STRING,
@@ -92,5 +92,4 @@ User.init(
 		tableName: "users",
 	},
 );
-
 export default User;

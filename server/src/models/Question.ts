@@ -6,7 +6,7 @@ import Quiz from "./Quiz";
 interface QuestionAttributes {
 	id: number;
 	text: string;
-	quizId: number;
+	quiz_id: number; 
 }
 
 interface QuestionCreationAttributes extends Omit<QuestionAttributes, "id"> {}
@@ -17,7 +17,7 @@ class Question
 {
 	public id!: number;
 	public text!: string;
-	public quizId!: number;
+	public quiz_id!: number; 
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -34,7 +34,7 @@ Question.init(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		quizId: {
+		quiz_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -50,7 +50,7 @@ Question.init(
 );
 
 // Define relationship
-Question.hasMany(Answer, { foreignKey: "questionId" });
-Answer.belongsTo(Question, { foreignKey: "questionId" });
+Question.hasMany(Answer, { foreignKey: "question_id" });
+Answer.belongsTo(Question, { foreignKey: "question_id" });
 
 export default Question;

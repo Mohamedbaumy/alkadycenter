@@ -4,8 +4,9 @@ import User from "./User";
 
 interface DoctorAttributes {
 	id: number;
-	specialization: string;
-	userId: number; // Foreign key to User
+	image: string;
+	job_title: string;
+	user_id: number;
 }
 
 interface DoctorCreationAttributes extends Omit<DoctorAttributes, "id"> {}
@@ -15,8 +16,9 @@ class Doctor
 	implements DoctorAttributes
 {
 	public id!: number;
-	public specialization!: string;
-	public userId!: number;
+	public image!: string;
+	public job_title!: string;
+	public user_id!: number;
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -29,11 +31,15 @@ Doctor.init(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		specialization: {
+		image: {
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
-		userId: {
+		job_title: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		user_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -47,5 +53,4 @@ Doctor.init(
 		tableName: "doctors",
 	},
 );
-
 export default Doctor;

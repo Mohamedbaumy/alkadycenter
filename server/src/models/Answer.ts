@@ -1,11 +1,12 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
 import Question from "./Question";
+
 interface AnswerAttributes {
 	id: number;
 	text: string;
 	isCorrect: boolean;
-	questionId: number;
+	question_id: number; 
 }
 
 interface AnswerCreationAttributes extends Omit<AnswerAttributes, "id"> {}
@@ -17,7 +18,7 @@ class Answer
 	public id!: number;
 	public text!: string;
 	public isCorrect!: boolean;
-	public questionId!: number;
+	public question_id!: number; 
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -38,7 +39,7 @@ Answer.init(
 			type: DataTypes.BOOLEAN,
 			allowNull: false,
 		},
-		questionId: {
+		question_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -52,5 +53,4 @@ Answer.init(
 		tableName: "answers",
 	},
 );
-
 export default Answer;

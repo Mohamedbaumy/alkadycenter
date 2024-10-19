@@ -6,9 +6,9 @@ import Answer from "./Answer";
 
 interface UserAnswerAttributes {
 	id: number;
-	userId: number;
-	questionId: number;
-	answerId: number; // Foreign key to Answer
+	user_id: number; 
+	question_id: number; 
+	answer_id: number; 
 }
 
 interface UserAnswerCreationAttributes
@@ -19,9 +19,9 @@ class UserAnswer
 	implements UserAnswerAttributes
 {
 	public id!: number;
-	public userId!: number;
-	public questionId!: number;
-	public answerId!: number;
+	public user_id!: number;
+	public question_id!: number; 
+	public answer_id!: number; 
 
 	public readonly createdAt!: Date;
 	public readonly updatedAt!: Date;
@@ -34,7 +34,7 @@ UserAnswer.init(
 			autoIncrement: true,
 			primaryKey: true,
 		},
-		userId: {
+		user_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -42,7 +42,7 @@ UserAnswer.init(
 				key: "id",
 			},
 		},
-		questionId: {
+		question_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -50,7 +50,7 @@ UserAnswer.init(
 				key: "id",
 			},
 		},
-		answerId: {
+		answer_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
@@ -64,5 +64,4 @@ UserAnswer.init(
 		tableName: "user_answers",
 	},
 );
-
 export default UserAnswer;
