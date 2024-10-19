@@ -33,6 +33,21 @@ const router = Router();
  *               faculty_id:
  *                 type: integer
  *                 example: 2
+ *               platform:
+ *                 type: string
+ *                 example: "Android"
+ *               manufacturer:
+ *                 type: string
+ *                 example: "Gulgowski, McLaughlin and D'Amore"
+ *               model:
+ *                 type: string
+ *                 example: "Larkin LLC 6"
+ *               device_id:
+ *                 type: string
+ *                 example: "f1c4cdc9-f135-47bf-bf74-17425c96dc31"
+ *               notification_token:
+ *                 type: string
+ *                 example: "token123"
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -268,6 +283,8 @@ router.post(
  *   get:
  *     summary: Get user profile
  *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: User profile retrieved successfully
