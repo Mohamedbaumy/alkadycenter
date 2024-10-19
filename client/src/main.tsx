@@ -11,7 +11,7 @@ import FacultyPage from "./features/faculty/Page.tsx";
 import axios from "axios";
 import DoctorPage from "./features/doctor/Page.tsx";
 import StudentPage from "./features/student/Page.tsx";
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "https://alqadi.online";
 
 // Create a client for React Query
 const queryClient = new QueryClient();

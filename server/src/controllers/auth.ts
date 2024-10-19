@@ -8,7 +8,18 @@ import { sendResponse } from "../middlewares/errorHandler";
 const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 
 export const register = async (req: Request, res: Response) => {
-	const { name, phone_number, password, level_id, faculty_id } = req.body;
+	const {
+		name,
+		phone_number,
+		password,
+		level_id,
+		faculty_id,
+		platform,
+		manufacturer,
+		model,
+		device_id,
+		notification_token,
+	} = req.body;
 	try {
 		const existingUser = await User.findOne({ where: { phone: phone_number } });
 		if (existingUser) {
@@ -22,6 +33,11 @@ export const register = async (req: Request, res: Response) => {
 			phone: phone_number,
 			password: hashedPassword,
 			role: UserRole.STUDENT,
+			platform,
+			manufacturer,
+			model,
+			device_id,
+			notification_token,
 		});
 
 		const student = await Student.create({
