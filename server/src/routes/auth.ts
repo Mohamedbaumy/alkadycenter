@@ -111,10 +111,10 @@ router.post(
 	"/register",
 	[
 		body("name").isString().notEmpty().withMessage("Name is required"),
-		body("phone")
+		body("phone_number")
 			.isString()
 			.isLength({ min: 10, max: 15 })
-			.withMessage("Phone must be between 10 and 15 characters"),
+			.withMessage("Phone number must be between 10 and 15 characters"),
 		body("password")
 			.isString()
 			.isLength({ min: 6 })
@@ -157,7 +157,7 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               phone:
+ *               phone_number:
  *                 type: string
  *                 example: "01100000000"
  *               password:

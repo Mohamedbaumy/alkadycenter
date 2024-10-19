@@ -64,7 +64,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
 	const {
-		phone,
+		phone_number,
 		password,
 		platform,
 		manufacturer,
@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response) => {
 	} = req.body;
 
 	try {
-		const user = await User.findOne({ where: { phone } });
+		const user = await User.findOne({ where: { phone: phone_number } });
 		if (!user) {
 			return sendResponse(
 				res,
