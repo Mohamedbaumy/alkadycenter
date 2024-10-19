@@ -254,8 +254,8 @@ router.post(
 	[
 		body("phone_number")
 			.isString()
-			.isLength({ min: 11, max: 11 })
-			.withMessage("Phone must be between 10 and 15 characters"),
+			.isLength({ min: 10, max: 15 })
+			.withMessage("phone_number must be between 10 and 15 characters"),
 		body("password")
 			.isString()
 			.isLength({ min: 6 })
