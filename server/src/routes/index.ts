@@ -8,7 +8,7 @@ import studentRoutes from "./student";
 import { authenticate } from "../middlewares/auth";
 const router = Router();
 
-router.use("/auth", authRoutes);
+router.use("/", authRoutes);
 router.use("/", generalRoutes);
 router.use("/", homeRoutes);
 router.use("/faculty", facultyRoutes);
