@@ -1,11 +1,13 @@
 import { Router } from "express";
 import {
 	getAllCourses,
+	getCourse,
 	getDoctorCourses,
 	getDoctors,
 	getTopCourses,
 	getTopDoctors,
 } from "../controllers/home"; // Import the controller functions
+import { authenticate } from "../middlewares/auth";
 
 const router = Router();
 
@@ -23,10 +25,41 @@ const router = Router();
  * @swagger
  * /all-courses:
  *   get:
- *     summary: Get all courses
+ *     summary: Get all courses with filters and pagination
  *     tags: [Home]
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: order_type
+ *         schema:
+ *           type: string
+ *           enum: [new, popular]
+ *         description: Order type for sorting courses
+ *       - in: query
+ *         name: faculty_id
+ *         schema:
+ *           type: integer
+ *         description: Faculty ID for filtering
+ *       - in: query
+ *         name: level_id
+ *         schema:
+ *           type: integer
+ *         description: Level ID for filtering
+ *       - in: query
+ *         name: term
+ *         schema:
+ *           type: integer
+ *           enum: [1, 2]
+ *         description: Term for filtering
+ *       - in: query
+ *         name: query
+ *         schema:
+ *           type: string
+ *         description: Search query for course title or doctor name
  *     responses:
  *       200:
  *         description: Courses retrieved successfully
@@ -43,8 +76,6 @@ const router = Router();
  *                   type: array
  *                   items:
  *                     $ref: '#/components/schemas/Course'
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
  *       500:
  *         $ref: '#/components/responses/InternalServerError'
  */
@@ -267,5 +298,27 @@ router.get("/doctors", getTopDoctors);
  *                   type: string
  */
 router.get("/doctor-courses/:doctor_id", getDoctorCourses);
+
+/**
+ * @swagger
+ * /course/{course_id}:
+ *   get:
+ *     summary: Get course details
+ *     tags: [Home]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: course_id
+ *         in: path
+ *         description: ID of the course
+ *         required: true
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Course details retrieved successfully
+ *       500:
+ *         description: Error fetching course details
+ */
+router.get("/course/:course_id", authenticate, getCourse);
 
 export default router;

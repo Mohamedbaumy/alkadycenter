@@ -7,7 +7,7 @@ const router = Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /register:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -146,7 +146,7 @@ router.post(
 
 /**
  * @swagger
- * /auth/login:
+ * /login:
  *   post:
  *     summary: Login a user
  *     tags: [Auth]
@@ -281,7 +281,7 @@ router.post(
 
 /**
  * @swagger
- * /auth/user-profile:
+ * /user-profile:
  *   get:
  *     summary: Get user profile
  *     tags: [Auth]
@@ -381,6 +381,6 @@ router.get("/user-profile", userProfile);
  *                   type: object
  *                   additionalProperties: true
  */
-router.post("/admin-login", adminLogin);
+router.post("/auth/admin-login", adminLogin);
 
 export default router;

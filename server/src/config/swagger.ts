@@ -10,7 +10,8 @@ const swaggerOptions = {
 		},
 		servers: [
 			{
-				url: "https://alqadi.online/api",
+				// url: "https://alqadi.online/api",
+				url: "http://localhost:3000/api",
 			},
 		],
 	},

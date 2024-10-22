@@ -7,6 +7,7 @@ import Lecture from "../models/Lecture";
 import Quiz from "../models/Quiz";
 import Document from "../models/Document";
 import StudentCourse from "../models/StudentCourse";
+import { Doctor } from "../models";
 
 interface CourseResponse {
 	id: number;
@@ -32,8 +33,19 @@ interface DoctorResponse {
 
 export const getAllCourses = async (req: Request, res: Response) => {
 	try {
-		const courses: CourseResponse[] = await sequelize.query(
-			`
+		const {
+			page = 1,
+			order_type = "new",
+			faculty_id,
+			level_id,
+			term,
+			query,
+		} = req.query;
+
+		const limit = 10;
+		const offset = (Number(page) - 1) * limit;
+
+		let sqlQuery = `
 			SELECT 
 				c.id, 
 				c.title, 
@@ -43,16 +55,54 @@ export const getAllCourses = async (req: Request, res: Response) => {
 				d.job_title AS doctor_job_title, 
 				c.price, 
 				(SELECT COUNT(*) FROM lectures l WHERE l.course_id = c.id) AS no_of_lectures,
-				(SELECT COUNT(*) FROM documents d WHERE d.course_id = c.id) AS no_of_documents
+				(SELECT COUNT(*) FROM documents d WHERE d.course_id = c.id) AS no_of_documents,
+				(SELECT COUNT(*) FROM StudentCourses sc WHERE sc.course_id = c.id) AS no_of_students
 			FROM 
 				courses c
 			LEFT JOIN 
 				doctors d ON c.doctor_id = d.id
 			LEFT JOIN 
 				users u ON d.user_id = u.id
-		`,
-			{ type: QueryTypes.SELECT },
-		);
+			WHERE 1=1
+		`;
+
+		const queryParams: any = {};
+
+		if (faculty_id && faculty_id !== "0") {
+			sqlQuery += " AND c.faculty_id = :faculty_id";
+			queryParams.faculty_id = faculty_id;
+		}
+
+		if (level_id && level_id !== "0") {
+			sqlQuery += " AND c.level_id = :level_id";
+			queryParams.level_id = level_id;
+		}
+
+		if (term) {
+			const semester = Number(term) === 1 ? "first" : "second";
+			sqlQuery += " AND c.semester = :semester";
+			queryParams.semester = semester;
+		}
+
+		if (query) {
+			sqlQuery += " AND (c.title LIKE :query OR u.name LIKE :query)";
+			queryParams.query = `%${query}%`;
+		}
+
+		if (order_type === "popular") {
+			sqlQuery += " ORDER BY no_of_students DESC";
+		} else {
+			sqlQuery += " ORDER BY c.createdAt DESC";
+		}
+
+		sqlQuery += " LIMIT :limit OFFSET :offset";
+		queryParams.limit = limit;
+		queryParams.offset = offset;
+
+		const courses: CourseResponse[] = await sequelize.query(sqlQuery, {
+			type: QueryTypes.SELECT,
+			replacements: queryParams,
+		});
 
 		const formattedCourses = courses.map((course) => ({
 			...course,
@@ -213,7 +263,7 @@ export const getDoctorCourses = async (req: Request, res: Response) => {
         "no_of_lectures": 17,
         "no_of_documents": 0,
         "is_bought": false,
-        "lecture": [
+        "lectures": [
             {
                 "id": 745,
                 "title": "Session 1",
@@ -339,20 +389,96 @@ export const getDoctorCourses = async (req: Request, res: Response) => {
     },
  */
 
-export const getCourse = async (req: Request, res: Response) => {
+interface LectureResponse {
+	id: number;
+	title: string;
+	link: string;
+	is_free: boolean;
+	duration: string;
+}
+
+interface DocumentResponse {
+	id: number;
+	title: string;
+	link: string;
+}
+
+interface QuizResponse {
+	id: number;
+	title: string;
+}
+
+interface CourseResponse {
+	student_name: string;
+	student_phone_number: string;
+	id: number;
+	title: string;
+	description: string;
+	image: string;
+	doctor_name: string;
+	doctor_job_title: string;
+	doctor_image: string;
+	price: string;
+	no_of_lectures: number;
+	no_of_documents: number;
+	is_bought: boolean;
+	lectures: LectureResponse[];
+	documents: DocumentResponse[];
+	quizzes: QuizResponse[];
+}
+
+export const getCourse = async (req: UserRequest, res: Response) => {
 	try {
 		const { course_id } = req.params;
+		const student = req.user;
 		const course = await Course.findByPk(course_id, {
-			attributes: { exclude: ["created_at", "updated_at"] },
-			include: [
-				{
-					model: Lecture,
-					as: "lectures",
-				},
-			],
+			attributes: ["id", "title", "description", "image", "price", "doctor_id"],
 		});
+		if (!course) {
+			return sendResponse(res, "Course not found", null, false);
+		}
 
-		sendResponse(res, "course", course, true);
+		const courseStudent = await StudentCourse.findOne({
+			where: { student_id: student?.id, course_id: course.id },
+		});
+		const is_bought = !!courseStudent;
+		const doctor = await sequelize.query(
+			`SELECT name AS doctor_name,
+			 image AS doctor_image, job_title AS doctor_job_title FROM doctors d
+			 LEFT JOIN users u ON d.user_id = u.id
+			 WHERE d.id = :doctor_id`,
+			{
+				type: QueryTypes.SELECT,
+				replacements: { doctor_id: course.doctor_id },
+			},
+		);
+		const lectures = await Lecture.findAll({
+			where: { course_id: course.id },
+			attributes: ["id", "title", "link", "is_free", "duration"],
+		});
+		const documents = await Document.findAll({
+			where: { course_id: course.id },
+			attributes: ["id", "title", "link"],
+		});
+		const quizzes = await Quiz.findAll({
+			where: { course_id: course.id },
+			attributes: ["id", "title"],
+		});
+		const courseResponse: CourseResponse = {
+			...course.get(),
+			is_bought,
+			student_name: student?.name as string,
+			student_phone_number: student?.phone as string,
+			...doctor[0],
+			price: `${course.price} جنيه`,
+			no_of_lectures: lectures.length,
+			no_of_documents: documents.length,
+			lectures: lectures as LectureResponse[],
+			documents: documents as DocumentResponse[],
+			quizzes: quizzes as QuizResponse[],
+		};
+
+		sendResponse(res, "course", courseResponse, true);
 	} catch (error) {
 		sendResponse(res, "Error fetching course", error, false);
 	}
