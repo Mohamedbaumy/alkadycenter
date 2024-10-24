@@ -474,7 +474,11 @@ export const getCourse = async (req: UserRequest, res: Response) => {
 						student_name: student.name,
 						student_phone_number: student.phone,
 					}
-				: {}),
+				: {
+						student_name: "",
+						student_phone_number: "",
+						is_bought: false,
+					}),
 			...doctor[0],
 			price: `${course.price} جنيه`,
 			no_of_lectures: lectures.length,

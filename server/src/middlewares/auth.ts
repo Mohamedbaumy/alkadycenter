@@ -18,7 +18,7 @@ export const authenticate = async (
 	next: NextFunction,
 ) => {
 	const token = req.headers.authorization?.split(" ")[1];
-	if (!token) {
+	if (!token || token === "null" || token === "undefined" || token === null) {
 		req.user = undefined;
 		return next();
 	}
