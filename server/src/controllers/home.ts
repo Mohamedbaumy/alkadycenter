@@ -437,11 +437,13 @@ export const getCourse = async (req: UserRequest, res: Response) => {
 		if (!course) {
 			return sendResponse(res, "Course not found", null, false);
 		}
-
-		const courseStudent = await StudentCourse.findOne({
-			where: { student_id: student?.id, course_id: course.id },
-		});
-		const is_bought = !!courseStudent;
+		let is_bought = false;
+		if (student) {
+			const courseStudent = await StudentCourse.findOne({
+				where: { student_id: student?.id, course_id: course.id },
+			});
+			is_bought = !!courseStudent;
+		}
 		const doctor = await sequelize.query(
 			`SELECT name AS doctor_name,
 			 image AS doctor_image, job_title AS doctor_job_title FROM doctors d
@@ -466,9 +468,13 @@ export const getCourse = async (req: UserRequest, res: Response) => {
 		});
 		const courseResponse: CourseResponse = {
 			...course.get(),
-			is_bought,
-			student_name: student?.name as string,
-			student_phone_number: student?.phone as string,
+			...(student
+				? {
+						is_bought,
+						student_name: student.name,
+						student_phone_number: student.phone,
+					}
+				: {}),
 			...doctor[0],
 			price: `${course.price} جنيه`,
 			no_of_lectures: lectures.length,

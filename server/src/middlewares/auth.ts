@@ -19,7 +19,8 @@ export const authenticate = async (
 ) => {
 	const token = req.headers.authorization?.split(" ")[1];
 	if (!token) {
-		return sendResponse(res, "No token provided", null, false);
+		req.user = undefined;
+		return next();
 	}
 
 	try {
