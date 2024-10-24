@@ -1,6 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../config/database";
-
+import Student from "./Student";
+import Course from "./Course";
 interface StudentCourseAttributes {
 	id: number;
 	student_id: number;
@@ -33,7 +34,7 @@ StudentCourse.init(
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: "students",
+				model: Student,
 				key: "id",
 			},
 		},
@@ -41,7 +42,7 @@ StudentCourse.init(
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowNull: false,
 			references: {
-				model: "courses",
+				model: Course,
 				key: "id",
 			},
 		},

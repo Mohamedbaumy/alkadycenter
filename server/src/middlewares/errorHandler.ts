@@ -8,7 +8,7 @@ export const sendResponse = (
 ) => {
 	return res
 		.status(200)
-		.json({ status: status || true, msg, data, is_authorized: true });
+		.json({ status: status, msg, data, is_authorized: true });
 };
 
 export const errorHandler = (

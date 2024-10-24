@@ -26,10 +26,12 @@ Student.belongsTo(User, { foreignKey: "user_id" });
 Student.belongsToMany(Course, {
 	through: StudentCourse,
 	foreignKey: "student_id",
+	otherKey: "course_id",
 });
 Course.belongsToMany(Student, {
 	through: StudentCourse,
 	foreignKey: "course_id",
+	otherKey: "student_id",
 });
 
 // Doctor <-> Course (One-to-Many)
@@ -79,6 +81,12 @@ UserAnswer.belongsTo(Question, { foreignKey: "question_id" });
 // Answer <-> UserAnswer (One-to-Many)
 Answer.hasMany(UserAnswer, { foreignKey: "answer_id" });
 UserAnswer.belongsTo(Answer, { foreignKey: "answer_id" });
+
+// Add these lines to define the associations for StudentCourse
+StudentCourse.belongsTo(Student, { foreignKey: "student_id" });
+StudentCourse.belongsTo(Course, { foreignKey: "course_id" });
+Student.hasMany(StudentCourse, { foreignKey: "student_id" });
+Course.hasMany(StudentCourse, { foreignKey: "course_id" });
 
 export {
 	User,

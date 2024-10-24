@@ -83,7 +83,7 @@ export const getAllStudents = async (req: Request, res: Response) => {
 			true,
 		);
 	} catch (error) {
-		return sendResponse(res, "خطأ في جلب الطلاب", error, false);
+		return sendResponse(res, "خطأ في جلب الطلاب", error.message, false);
 	}
 };
 
